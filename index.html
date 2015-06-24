@@ -3,57 +3,25 @@
 
 <head>
     <title>Tactics Monster - let us bling together</title>
+    <style>
+        canvas {
+            padding: 0, 0, 0, 0;
+            margin: auto;
+            display: block;
+            background-color: black;
+        }
+        
+        html {
+            background-color: white;
+        }
+    </style>
     <script src="https://code.createjs.com/createjs-2015.05.21.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        var stage;
-        var running = true;
-        var objectManager = [];
-        
-        var GameObject = function(bitmap,startX,startY){
-            objectManager.push(this);
-            this.name = "unnamed";
-            this.x=startX;
-            this.y=startY;
-            this.image = bitmap;
-            this.update = function(){};
-        }
-
-        function start() {
-            setup();
-            setInterval(update,16);
-        }
-
-        function setup() {
-            $("#gameWindow").width=document.body.width;
-            $("#gameWindow").height=document.body.height;
-            stage = new createjs.Stage("gameWindow");
-        }
-
-        function update() {
-            logic();
-            render();
-        }
-
-        function logic() {
-            
-        }
-
-        function render() {
-            var circle = new createjs.Shape();
-            circle.graphics.beginFill("red").drawCircle(0, 0, 50);
-            circle.x = 100;
-            circle.y = 100;
-            stage.addChild(circle);
-            stage.update();
-        }
-
-        $(document).ready(start);
-    </script>
+    <script src="Game.js"></script>
 </head>
 
-<body style="height: 100%; margin: 0;">
-    <canvas id="gameWindow" style="width: 100%; height: 100%;"></canvas>
+<body>
+    <canvas id="gameWindow"></canvas>
 </body>
 
 </html>
