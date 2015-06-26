@@ -25,7 +25,7 @@ var Point = function (x, y) {
         }
     };
     this.manDist = function (oth) {
-        return ((Math.abs(this.x-oth.x)) + (Math.abs(this.y-oth.y)))
+        return ((Math.abs(this.x - oth.x)) + (Math.abs(this.y - oth.y)))
     };
 };
 
@@ -33,12 +33,19 @@ var Mouse = function () {
     var inst = this;
     this.position = new Point(0, 0);
     this.tile = new Point(0, 0);
+    this.down = false;
     this.update = function () {
         stage.on("stagemousemove", function (evt) {
-            inst.position = new Point(evt.stageX/stage.scaleX, evt.stageY/stage.scaleY);
+            inst.position = new Point(evt.stageX / stage.scaleX, evt.stageY / stage.scaleY);
+            inst.tile = new Point(Math.round(inst.position.x / 32), Math.round(inst.position.y / 32));
         });
-        console.log(this.position);
-        this.tile = new Point(Math.round(this.position.x/32),Math.round(this.position.y/32));
+        stage.on("stagemousedown", function (evt) {
+            inst.down = true;
+        });
+        stage.on("stagemouseup", function (evt) {
+            inst.down = false;
+        });
+        //console.log(inst.down);
     };
 }
 
@@ -68,9 +75,12 @@ var GameObject = function (sheet, startX, startY) {
 
 function start() {
     setup();
-    var link = new GameObject(linkSpriteSheet,0,0);
+    var link = new GameObject(linkSpriteSheet, 0, 0);
     link.update = function () {
-        link.destination = mouse.tile;
+        if (mouse.down) {
+            link.destination = mouse.tile;
+            //console.log(mouse.tile);
+        }
     };
     setInterval(update, 16);
 }
