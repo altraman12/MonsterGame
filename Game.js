@@ -53,6 +53,7 @@ var mouse = new Mouse();
 
 var GameObject = function (sheet, startX, startY) {
     objectManager.push(this);
+    var inst = this;
     this.name = "unnamed";
     this.tile = new Point(startX, startY);
     this.position = new Point(startX * 32, startY * 32);
@@ -60,11 +61,22 @@ var GameObject = function (sheet, startX, startY) {
     this.image = new createjs.Sprite(sheet);
     this.alive = true;
     this.onStage = false;
+    this.moving = false;
     this.path = [];
+    function stopMoving(){
+        inst.moving = false;
+    }
     this.nativeActions = function () {
+        if(this.path.length>0 && !this.moving){
+            console.log(this.path[0]);
+            this.destination = this.path[0];
+            this.path.shift();
+        }
         if (!this.tile.equals(this.destination)) {
+            alert("moving");
             var desPos = new Point(this.destination.x * 32, this.destination.y * 32)
-            createjs.Tween.get(this.position).to(desPos, this.tile.manDist(this.destination) * 250);
+            this.moving = true;
+            createjs.Tween.get(this.position).to(desPos, this.tile.manDist(this.destination) * 250).call(stopMoving);
             this.tile = this.destination;
         }
         this.image.x = this.position.x;
@@ -78,7 +90,7 @@ function start() {
     var link = new GameObject(linkSpriteSheet, 0, 0);
     link.update = function () {
         if (mouse.down) {
-            link.destination = mouse.tile;
+            link.path.push(mouse.tile);
             //console.log(mouse.tile);
         }
     };
@@ -104,8 +116,10 @@ function logic() {
 }
 
 function render() {
-    stage.clear();
     for (var i = 0; i < objectManager.length; i++) {
+        if(objectManager[i].onStage && !objectManager[i].alive){
+            stage.removeChild(objectManager[i].image);
+        }
         if (objectManager[i].alive && !objectManager[i].onStage) {
             stage.addChild(objectManager[i].image);
         }
